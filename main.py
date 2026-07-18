@@ -4,7 +4,7 @@ from flask import Flask
 import telebot
 
 # ضع التوكن الخاص بك هنا بين العلامتين ""
-BOT_TOKEN = "8857836455:AAGHnMpnzrJrgvJdMiILs3jC9uP_KxpQZTA"
+BOT_TOKEN = "8857836455:AAGlE1EIFp79Q3-v53KM1DThj7kgx_fJ-QI"
 
 bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
