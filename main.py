@@ -3,28 +3,22 @@ import threading
 from flask import Flask
 import telebot
 
-BOT_TOKEN = "8857836455:AAHjYfUCltosPYLte7W59XATr16-ztmstD4"
+# سحب التوكن من متغيرات البيئة في ريندر بشكل آمن
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
-
-# قاموس لتخزين مؤقت للقروب ميديا لضمان تزامن الحذف
-media_groups = {}
 
 def delete_msg(chat_id, message_id):
     try:
         bot.delete_message(chat_id, message_id)
-    except:
+    except Exception as e:
+        print(f"Error deleting message: {e}")
         pass
 
 @bot.channel_post_handler(content_types=['photo', 'video', 'animation', 'document', 'audio', 'voice'])
 def handle_media(message):
-    # إذا كان المقطع جزءاً من قروب ميديا
-    if message.media_group_id:
-        # نشغل المؤقت لكل مقطع في القروب بشكل مستقل ليتم حذفهم جميعاً بعد 90 ثانية
-        threading.Timer(90.0, delete_msg, args=[message.chat.id, message.message_id]).start()
-    else:
-        # إذا كان مقطعاً منفرداً (ليس قروب)
-        threading.Timer(90.0, delete_msg, args=[message.chat.id, message.message_id]).start()
+    # تشغيل المؤقت لكل مقطع بشكل مستقل ليتم حذفه بعد 90 ثانية
+    threading.Timer(90.0, delete_msg, args=[message.chat.id, message.message_id]).start()
 
 @app.route('/')
 def index():
